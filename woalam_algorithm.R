@@ -1,11 +1,9 @@
 #############################################################################
 #
-#  This file is a part of the R package "metaheuristicOpt".
+#  This file is an adapted verion of the WOA file of the R package "metaheuristicOpt".
 #
-#  Author: Iip
+#  Author: Iip / Jasmin / Loris
 #  Co-author: -
-#  Supervisors: Lala Septem Riza, Eddy Prasetyo Nugroho
-#
 #
 #  This package is free software: you can redistribute it and/or modify it under
 #  the terms of the GNU General Public License as published by the Free Software
@@ -17,11 +15,11 @@
 #
 #############################################################################
 #' This is the internal function that implements Whale Optimization
-#' Algorithm. It is used to solve continuous optimization tasks.
+#' Algorithm with lamarickan inheritance. It is used to solve continuous optimization tasks.
 #' Users do not need to call it directly,
 #' but just use \code{\link{metaOpt}}.
 #'
-#' This algorithm was proposed by (Mirjalili, 2016), which mimics the
+#' The WOA algorithm was proposed by (Mirjalili, 2016), which mimics the
 #' social behavior of humpback whales. The algorithm is inspired by the
 #' bubble-net hunting strategy.
 #'
@@ -38,7 +36,7 @@
 #'       best position as the optimal solution for given problem. Otherwise, back to Update Whale Position steps.
 #'}
 #'
-#' @title Optimization using Whale Optimization Algorithm
+#' @title Optimization using Whale Optimization Algorithm with lamarickan learning
 #'
 #' @param FUN an objective function or cost function,
 #'
@@ -116,7 +114,7 @@ WOA <- function(FUN, optimType="MIN", numVar, numPopulation=40, maxIter=500, ran
   whale <- generateRandom(numPopulation, dimension, lowerBound, upperBound)
   
   # find the best position
-  bestPos <- engineWOA(FUN, optimType, maxIter, lowerBound, upperBound, whale)
+  bestPos <- engineWOALAM(FUN, optimType, maxIter, lowerBound, upperBound, whale)
   
   return(bestPos)
 }
@@ -129,7 +127,7 @@ WOA <- function(FUN, optimType="MIN", numVar, numPopulation=40, maxIter=500, ran
 # @param upperBound upper bound for each variable
 # @param whale population of whale
 
-engineWOA <- function(FUN, optimType, maxIter, lowerBound, upperBound, whale){
+engineWOALAM <- function(FUN, optimType, maxIter, lowerBound, upperBound, whale){
   # calculate the whale fitness
   whaleFitness <- calcFitness(FUN, optimType, whale)
   
