@@ -142,6 +142,14 @@ engineWOALAM <- function(FUN, optimType, maxIter, lowerBound, upperBound, whale)
   curve <- c()
   progressbar <- txtProgressBar(min = 0, max = maxIter, style = 3)
   
+  # Count if in this iteration the location has improved
+
+  if( (succPos > FbestPos) | is.empty(succPos) ){
+    succPos <- FbestPos
+    succ <- succ+1
+  }
+  
+  
   #t < maximum number of iterations
   for (t in 1:maxIter){
     # value a decreased linearly from 2 to 0
@@ -169,6 +177,8 @@ engineWOALAM <- function(FUN, optimType, maxIter, lowerBound, upperBound, whale)
       # shrinking encircling mechanism or spiral model
       p <- runif(1)
       
+      
+      
       #Lamarickan learning
       #IF t modulo LSSI == 0 - the local search strategy is executed
       lssi <- 50
@@ -176,18 +186,23 @@ engineWOALAM <- function(FUN, optimType, maxIter, lowerBound, upperBound, whale)
         #Calculate the variance of the optimal solution of the past generations
         
         #fitness value of each iteration
-        fvi <-
+        fvi <- FbestPos
         #average of the fitness values
-        afv <-
-        #total fitness value
-        tfv <-  
+        afv <- mean(whaleFitness)
+        #total number of fitness values
+        tfv <- numPopulation
         
-        sigma2 <- (t-tfv  * (fvi-afv)^2)/tfv
+        sigma2 <- ((fvi-afv)^2)/tfv
         
         # if sigma2 is less than or equal to present threshold
-        if(sigma2){
-          #Calculate individual development potential 
-          devPot <- 
+        if(sigma2 <= FbestPos ){
+          # Calculate individual development potential 
+          # Each individual has a certain development potential (Potential(xi)),
+          # and the individual with the development
+          # potential greater than the average development potential of
+          # the population is selected for local search.
+          c0 <- upperBound
+          devPot <- (whaleFitness[t]-FbestPos)/(t-succ) + sqrt((c0 * log(t))/succ)
           
           #Perform a partial search
           complexity <- (maxIter + maxIter * numPopulation * numVar^2)
