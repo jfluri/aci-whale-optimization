@@ -16,8 +16,6 @@
 #############################################################################
 #' This is the internal function that implements Whale Optimization
 #' Algorithm with lamarickan inheritance. It is used to solve continuous optimization tasks.
-#' Users do not need to call it directly,
-#' but just use \code{\link{metaOpt}}.
 #'
 #' The WOA algorithm was proposed by (Mirjalili, 2016), which mimics the
 #' social behavior of humpback whales. The algorithm is inspired by the
@@ -93,7 +91,7 @@
 #'
 #' @export
 
-WOA <- function(FUN, optimType="MIN", numVar, numPopulation=40, maxIter=500, rangeVar){
+WOALAM <- function(FUN, optimType="MIN", numVar, numPopulation=40, maxIter=500, rangeVar){
   # calculate the dimension of problem if not specified by user
   dimension <- ncol(rangeVar)
   
@@ -144,6 +142,7 @@ engineWOALAM <- function(FUN, optimType, maxIter, lowerBound, upperBound, whale)
   curve <- c()
   progressbar <- txtProgressBar(min = 0, max = maxIter, style = 3)
   
+  #t < maximum number of iterations
   for (t in 1:maxIter){
     # value a decreased linearly from 2 to 0
     a <- 2-t*((2)/maxIter)
@@ -151,6 +150,7 @@ engineWOALAM <- function(FUN, optimType, maxIter, lowerBound, upperBound, whale)
     # value a2 decreased linearly from -1 to -2
     a2 <- -1+t*((-1)/maxIter)
     
+    #for each search whale
     for (i in 1:nrow(whale)){
       # generate random number [0,1]
       r1 <- runif(1)
@@ -168,6 +168,34 @@ engineWOALAM <- function(FUN, optimType, maxIter, lowerBound, upperBound, whale)
       # p is random number to define the probability to select
       # shrinking encircling mechanism or spiral model
       p <- runif(1)
+      
+      #Lamarickan learning
+      #IF t modulo LSSI == 0 - the local search strategy is executed
+      lssi <- 50
+      if(t %% lssi == 0 ){
+        #Calculate the variance of the optimal solution of the past generations
+        
+        #fitness value of each iteration
+        fvi <-
+        #average of the fitness values
+        afv <-
+        #total fitness value
+        tfv <-  
+        
+        sigma2 <- (t-tfv  * (fvi-afv)^2)/tfv
+        
+        # if sigma2 is less than or equal to present threshold
+        if(sigma2){
+          #Calculate individual development potential 
+          devPot <- 
+          
+          #Perform a partial search
+          complexity <- (maxIter + maxIter * numPopulation * numVar^2)
+          
+        }
+        
+      }
+      
       
       for (j in 1:ncol(whale)) {
         if(p < 0.5){
@@ -211,7 +239,7 @@ engineWOALAM <- function(FUN, optimType, maxIter, lowerBound, upperBound, whale)
   
   close(progressbar)
   curve <- curve*optimType
-  # plot(c(1:maxIter), curve, type="l", main="WOA", log="y", xlab="Number Iteration", ylab = "Best Fittness",
+  # plot(c(1:maxIter), curve, type="l", main="WOALAM", log="y", xlab="Number Iteration", ylab = "Best Fittness",
   # ylim=c(curve[which.min(curve)],curve[which.max(curve)]))
   return(bestPos)
 }
