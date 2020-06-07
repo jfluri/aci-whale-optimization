@@ -217,25 +217,13 @@ engineWOALAM <- function(FUN, optimType, maxIter, lowerBound, upperBound, whale)
           # Perform a partial search
           # only with the m best whales
           for (j in 1:m) {
-            if(p < 0.5){
-              if(abs(A) >= 1){
                 # do exploration phase (search for prey)
                 ## choose random index of whale
                 rand.index <- floor(m*runif(1,1,sl)+1)
                 x.rand <- whale[rand.index,]
                 D.x.rand <- abs(C*x.rand[j]-whale[i,j])
                 whale[i,j] <- x.rand[j]-A*D.x.rand
-              }else if(abs(A) < 1){
-                # do encircling prey
-                D.bestPos <- abs(C*bestPos[j]-whale[i,j])
-                whale[i,j] <- bestPos[j]-A*D.bestPos
-              }
-            }else if(p >= 0.5){
-              # distance whale to the prey
-              distance <- abs(bestPos[j]-whale[i,j])
-              whale[i,j] <- distance*exp(b*l)*cos(l*2*pi)+bestPos[j]
-            }
-        }
+          }
           
           
             # bring back whale if it go outside search space
