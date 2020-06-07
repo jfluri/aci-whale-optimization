@@ -142,13 +142,7 @@ engineWOALAM <- function(FUN, optimType, maxIter, lowerBound, upperBound, whale)
   curve <- c()
   progressbar <- txtProgressBar(min = 0, max = maxIter, style = 3)
   
-  # Count if in this iteration the location has improved
 
-  if( (succPos > FbestPos) | is.empty(succPos) ){
-    succPos <- FbestPos
-    succ <- succ+1
-  }
-  
   
   #t < maximum number of iterations
   for (t in 1:maxIter){
@@ -180,32 +174,83 @@ engineWOALAM <- function(FUN, optimType, maxIter, lowerBound, upperBound, whale)
       
       
       #Lamarickan learning
-      #IF t modulo LSSI == 0 - the local search strategy is executed
+      
+      
+      # Count if in this iteration the location has improved
+      if( (succPos > FbestPos) | is.empty(succPos) ){
+        succPos <- FbestPos
+        succ <- succ+1
+      }
+      
+      
+      # LSSI is 50 by default
       lssi <- 50
+      # IF t modulo LSSI == 0 - the local search strategy is executed
       if(t %% lssi == 0 ){
         #Calculate the variance of the optimal solution of the past generations
         
-        #fitness value of each iteration
-        fvi <- FbestPos
         #average of the fitness values
         afv <- mean(whaleFitness)
-        #total number of fitness values
-        tfv <- numPopulation
         
-        sigma2 <- ((fvi-afv)^2)/tfv
+        #variance calculation
+        Variance <- ((FbestPos-afv)^2)/numPopulation
         
-        # if sigma2 is less than or equal to present threshold
-        if(sigma2 <= FbestPos ){
-          # Calculate individual development potential 
-          # Each individual has a certain development potential (Potential(xi)),
-          # and the individual with the development
-          # potential greater than the average development potential of
-          # the population is selected for local search.
-          c0 <- upperBound
-          devPot <- (whaleFitness[t]-FbestPos)/(t-succ) + sqrt((c0 * log(t))/succ)
+        # if Variance (sigma2) is less than or equal to present threshold
+        if(variance <= FbestPos ){
           
-          #Perform a partial search
-          complexity <- (maxIter + maxIter * numPopulation * numVar^2)
+          
+          # number of Whales with a development potential higher than average
+          numWhalesBetter <- trunc(nrow(whale)/3)
+            
+          # selection of individuals with better development potential
+          # m represents number of whales that need to perform local search   
+          m <- numWhalesBetter - ((numWhalesBetter-1)/maxIter)*t
+          
+          
+          # calculate subset length
+          sl <- trunc(dimension/3)
+          # subset selection of optimal individuals for local search
+          # randomly generate integer between 1 and the subset length (sl)
+          nsl <- runif(1,1,sl)
+          
+          
+          # local search 
+          # Perform a partial search
+          # only with the m best whales
+          for (j in 1:m) {
+            if(p < 0.5){
+              if(abs(A) >= 1){
+                # do exploration phase (search for prey)
+                ## choose random index of whale
+                rand.index <- floor(m*runif(1)+1)
+                x.rand <- whale[rand.index,]
+                D.x.rand <- abs(C*x.rand[j]-whale[i,j])
+                whale[i,j] <- x.rand[j]-A*D.x.rand
+              }else if(abs(A) < 1){
+                # do encircling prey
+                D.bestPos <- abs(C*bestPos[j]-whale[i,j])
+                whale[i,j] <- bestPos[j]-A*D.bestPos
+              }
+            }else if(p >= 0.5){
+              # distance whale to the prey
+              distance <- abs(bestPos[j]-whale[i,j])
+              whale[i,j] <- distance*exp(b*l)*cos(l*2*pi)+bestPos[j]
+            }
+        }
+          
+          
+            # bring back whale if it go outside search space
+            whale[i,] <- checkBound(whale[i,], lowerBound, upperBound)
+            
+            #calculate fitness
+            fitness <- optimType*FUN(whale[i,])
+            
+            # update bestPos
+            if(fitness<FbestPos){
+              FbestPos <- fitness
+              bestPos <- whale[i,]
+            }
+         
           
         }
         
@@ -237,6 +282,7 @@ engineWOALAM <- function(FUN, optimType, maxIter, lowerBound, upperBound, whale)
       # bring back whale if it go outside search space
       whale[i,] <- checkBound(whale[i,], lowerBound, upperBound)
       
+      #calculate fitness
       fitness <- optimType*FUN(whale[i,])
       
       # update bestPos
@@ -256,5 +302,6 @@ engineWOALAM <- function(FUN, optimType, maxIter, lowerBound, upperBound, whale)
   curve <- curve*optimType
   # plot(c(1:maxIter), curve, type="l", main="WOALAM", log="y", xlab="Number Iteration", ylab = "Best Fittness",
   # ylim=c(curve[which.min(curve)],curve[which.max(curve)]))
+  # Return best results
   return(bestPos)
 }

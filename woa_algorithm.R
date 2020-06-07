@@ -95,7 +95,7 @@
 #'
 #' @export
 
-WOA <- function(FUN, optimType="MIN", numVar, numPopulation=40, maxIter=500, rangeVar){
+WOA <- function(FUN, optimType="MIN", numVar=5, numPopulation=40, maxIter=500, rangeVar){
   # calculate the dimension of problem if not specified by user
   dimension <- ncol(rangeVar)
   
