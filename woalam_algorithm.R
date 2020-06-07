@@ -211,8 +211,7 @@ engineWOALAM <- function(FUN, optimType, maxIter, lowerBound, upperBound, whale)
           sl <- trunc(dimension/3)
           # subset selection of optimal individuals for local search
           # randomly generate integer between 1 and the subset length (sl)
-          nsl <- runif(1,1,sl)
-          
+          # nsl <- runif(1,1,sl)
           
           # local search 
           # Perform a partial search
@@ -222,7 +221,7 @@ engineWOALAM <- function(FUN, optimType, maxIter, lowerBound, upperBound, whale)
               if(abs(A) >= 1){
                 # do exploration phase (search for prey)
                 ## choose random index of whale
-                rand.index <- floor(m*runif(1)+1)
+                rand.index <- floor(m*runif(1,1,sl)+1)
                 x.rand <- whale[rand.index,]
                 D.x.rand <- abs(C*x.rand[j]-whale[i,j])
                 whale[i,j] <- x.rand[j]-A*D.x.rand
