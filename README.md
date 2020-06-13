@@ -1,5 +1,6 @@
 # Whale Optimization Algorithm in Data Clustering
 Code for data clustering with the whale optimization algorithm and lamarickan learning.
+Available at [GitHub](https://github.com/jfluri/aci-whale-optimization)
 
 ## Setup environment
 
