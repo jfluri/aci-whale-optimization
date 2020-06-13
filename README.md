@@ -26,6 +26,9 @@ maxIter = 600
 numPopulation = 60
 ```
 
+### Demonstration Video
+[The Video of the Whale Optimization Algorithm can be found here!](https://youtu.be/sZUDrQZvTpg)
+
 #### Objective Function
 The opjective function of the WOA is the sphere function
 
