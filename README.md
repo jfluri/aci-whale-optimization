@@ -1,6 +1,5 @@
 # Whale Optimization Algorithm in Data Clustering
-Code for data clustering with the whale optimization algorithm and lamarickan learning.
-Available at [GitHub](https://github.com/jfluri/aci-whale-optimization)
+Code for data clustering with the whale optimization algorithm combined with lamarickan learning.
 
 ## Setup environment
 
@@ -31,7 +30,7 @@ numPopulation = 60
 [The Video of the Whale Optimization Algorithm can be found here!](https://youtu.be/sZUDrQZvTpg)
 
 #### Objective Function
-The opjective function of the WOA is the sphere function
+The objective function of the WOA is the sphere function
 
 ![Sphere Function](images/sphere-function.jpg "Sphere Function")
 
